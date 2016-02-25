@@ -1,0 +1,21 @@
+{
+  "name": "neTpyceB/TMCms-module-clients",
+  "type": "library",
+  "description": "Module Clients for TMCms",
+  "keywords": ["module", "clients", "TMCms"],
+  "homepage": "http://devp.eu/",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Vadims Petrusevs",
+      "email": "info@devp.lv",
+      "homepage": "http://devp.eu/",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "TMCms\\Modules\\Clients\\": "src"
+    }
+  }
+}
