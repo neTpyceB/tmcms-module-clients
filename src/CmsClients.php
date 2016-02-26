@@ -27,6 +27,7 @@ use TMCms\Modules\Clients\Entity\ClientEntityRepository;
 use TMCms\Modules\ModuleManager;
 use TMCms\Modules\Sessions\Entity\SessionEntity;
 use TMCms\Modules\Sessions\Entity\SessionEntityRepository;
+use TMCms\Modules\Sessions\ModuleSessions;
 
 defined('INC') or exit;
 
@@ -73,10 +74,32 @@ class CmsClients
                 ->enableOrderableColumn()
                 ->setPairedDataOptionsForKeys($groups->getPairs('title'))
             )
-            ->addColumn(ColumnEdit::getInstance('edit'))
+            ->addColumn(ColumnData::getInstance('auth')
+                ->value('auth...')
+                ->setHref('?p='. P .'&do=_auth&id={%id%}')
+                ->enableNarrowWidth()
+            )
             ->addColumn(ColumnActive::getInstance('active'))
+            ->addColumn(ColumnEdit::getInstance('edit'))
             ->addColumn(ColumnDelete::getInstance())
         ;
+    }
+
+    public function _auth()
+    {
+        if (ModuleManager::moduleExists('sesssions')) {
+            error('Module Sessions required');
+        }
+
+        // Stop existing session
+        ModuleSessions::stop();
+
+        // Start session
+        $client = new ClientEntity($_GET['id']);
+        ModuleSessions::start($client->getId());
+
+        // Redirect to main page
+        go('/');
     }
 
     private static function __clients_add_edit_form()
