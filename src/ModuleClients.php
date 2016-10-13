@@ -31,29 +31,41 @@ class ModuleClients implements IModule {
 		return Users::getInstance()->generateHash($password, self::$_password_salt . Configuration::getInstance()->get('cms')['unique_key']);
 	}
 
-	private static function validateFields($post, $create_client = true) {
+	private static function validateFields($post, $create_client = true, $required_fields) {
 
 		$result = [];
 		$errors = [];
 
-		// Check e-mail address (required)
-		if (empty($post['email']) || !filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
-			$errors[] = w('Email_field_error');
-		}
-		else {
-			// Check for existing user
-			$existing_client = ClientEntityRepository::findOneEntityByCriteria([
-					'email' => $post['email']
-			]);
+		// Required fields
+		if ($required_fields) {
 
-			if ($create_client) {
-				if ($existing_client) {
-					$errors[] = w('Client_with_this_email_already_exist');
+			foreach ($post as $key => $field) {
+				if (in_array($key,$required_fields) && empty($field)) {
+					$errors[] = w('Need_to_fill_field') . ': '. $key;
 				}
 			}
+		}
+
+		// Check e-mail address (required)
+		if (isset($post['email'])) {
+			if (empty($post['email']) || !filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
+				$errors[] = w('Email_field_error');
+			}
 			else {
-				if ($existing_client && $existing_client->getId() != $post['id']) {
-					$errors[] = w('Client_with_this_email_already_exist');
+				// Check for existing user
+				$existing_client = ClientEntityRepository::findOneEntityByCriteria([
+						'email' => $post['email']
+				]);
+
+				if ($create_client) {
+					if ($existing_client) {
+						$errors[] = w('Client_with_this_email_already_exist');
+					}
+				}
+				else {
+					if ($existing_client && $existing_client->getId() != $post['id']) {
+						$errors[] = w('Client_with_this_email_already_exist');
+					}
 				}
 			}
 		}
@@ -109,7 +121,7 @@ class ModuleClients implements IModule {
 
 	}
 
-	public static function saveProfile($post) {
+	public static function saveProfile($post, $required = []) {
 
 		// Check for client ID
 		$id = (!empty($post['id']) ? $post['id'] : 0);
@@ -122,7 +134,7 @@ class ModuleClients implements IModule {
 		}
 
 		// Validate profile fields
-		$validate = self::validateFields($post, false);
+		$validate = self::validateFields($post, false, $required);
 		if (!empty($validate['errors'])) {
 			return ['errors' => $validate['errors']];
 		}
