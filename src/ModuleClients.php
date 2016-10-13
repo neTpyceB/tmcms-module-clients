@@ -31,7 +31,7 @@ class ModuleClients implements IModule {
 		return Users::getInstance()->generateHash($password, self::$_password_salt . Configuration::getInstance()->get('cms')['unique_key']);
 	}
 
-	private static function validateFields($post, $create_client = true, $required_fields) {
+	private static function validateFields($post, $create_client = true, $required_fields = []) {
 
 		$result = [];
 		$errors = [];
