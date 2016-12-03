@@ -225,6 +225,7 @@ class CmsClients
                 ->setHref('?p=' . P . '&do=_groups_default&id={%id%}')
                 ->enableOrderableColumn()
                 ->disableNewlines()
+                ->disableAjax()
             )
             ->addColumn(ColumnActive::getInstance('active')
                 ->setHref('?p=' . P . '&do=_groups_active&id={%id%}')
@@ -316,12 +317,12 @@ class CmsClients
 
         // Disable to all
         $groups = new ClientGroupEntityRepository();
-        $groups->setDefault(false);
+        $groups->setDefault(0);
         $groups->save();
 
         // Enable on selected
         $group = new ClientGroupEntity($id);
-        $group->setDefault(true);
+        $group->setDefault(1);
         $group->save();
 
         App::add('Group "'. $group->getTitle() .'" set as default');
