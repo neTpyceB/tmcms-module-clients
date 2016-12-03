@@ -4,8 +4,6 @@ namespace TMCms\Modules\Clients;
 
 use TMCms\Admin\Menu;
 use TMCms\Admin\Messages;
-use TMCms\Admin\Users;
-use TMCms\Config\Configuration;
 use TMCms\HTML\BreadCrumbs;
 use TMCms\HTML\Cms\CmsForm;
 use TMCms\HTML\Cms\CmsTable;
@@ -87,7 +85,7 @@ class CmsClients
 
     public function _auth()
     {
-        if (ModuleManager::moduleExists('sesssions')) {
+        if (ModuleManager::moduleExists('sessions')) {
             error('Module Sessions required');
         }
 

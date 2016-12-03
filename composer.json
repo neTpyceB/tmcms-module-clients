@@ -21,6 +21,9 @@
     "devp-eu/tmcms-core": "dev-master",
     "devp-eu/tmcms-panel": "dev-master"
   },
+  "suggest": {
+    "devp-eu/tmcms-module-sessions": "dev-master"
+  },
   "autoload": {
     "psr-4": {
       "TMCms\\Modules\\Clients\\": "src"

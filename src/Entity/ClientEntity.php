@@ -2,6 +2,7 @@
 
 namespace TMCms\Modules\Clients\Entity;
 
+use TMCms\Modules\Clients\ModuleClients;
 use TMCms\Orm\Entity;
 
 /**
@@ -14,9 +15,20 @@ use TMCms\Orm\Entity;
  * @method string getLogin()
  * @method string getName()
  * @method string getPhone()
+ *
  * @method setActive(bool $flag)
+ * @method setGroupId(int $group_id)
  * @method setPassword(string $password)
  */
 class ClientEntity extends Entity {
     protected $db_table = 'm_clients';
+
+    protected function beforeCreate()
+    {
+        if (!$this->getGroupId()) {
+            $this->setGroupId(ModuleClients::getDefaultGroupId());
+        }
+
+        return $this;
+    }
 }

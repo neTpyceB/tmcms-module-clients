@@ -6,148 +6,194 @@ use TMCms\Admin\Users;
 use TMCms\Config\Configuration;
 use TMCms\Modules\Clients\Entity\ClientEntity;
 use TMCms\Modules\Clients\Entity\ClientEntityRepository;
+use TMCms\Modules\Clients\Entity\ClientGroupEntityRepository;
 use TMCms\Modules\IModule;
 use TMCms\Modules\Sessions\ModuleSessions;
 use TMCms\Routing\Structure;
-use TMCms\Strings\UID;
 use TMCms\Traits\singletonInstanceTrait;
 
 defined('INC') or exit;
 
-class ModuleClients implements IModule {
-	use singletonInstanceTrait;
+class ModuleClients implements IModule
+{
+    use singletonInstanceTrait;
 
-	private static $_password_salt = 'fgfdg#EGTU$%!)<vdg';
+    private static $_password_salt = 'fgfdg#EGTU$%!)<vdg';
 
-	public static function authorize($login, $password) {
-		return ClientEntityRepository::findOneEntityByCriteria([
-			'login' => $login,
-			'hash' => self::generateHash($password),
-			'active' => 1,
-		]);
-	}
+    public static function authorize($login, $password)
+    {
+        return ClientEntityRepository::findOneEntityByCriteria([
+            'login' => $login,
+            'hash' => self::generateHash($password),
+            'active' => 1,
+        ]);
+    }
 
-	public static function generateHash($password) {
-		return Users::getInstance()->generateHash($password, self::$_password_salt . Configuration::getInstance()->get('cms')['unique_key']);
-	}
+    /**
+     * @param string $password_salt
+     */
+    public static function setPasswordSalt($password_salt)
+    {
+        self::$_password_salt = $password_salt;
+    }
 
-	private static function validateFields($post, $create_client = true, $required_fields = []) {
+    /**
+     * @param string $password
+     * @return string
+     */
+    public static function generateHash($password)
+    {
+        return Users::getInstance()->generateHash($password, self::$_password_salt . Configuration::getInstance()->get('cms')['unique_key']);
+    }
 
-		$result = [];
-		$errors = [];
+    /**
+     * @return int
+     */
+    public static function getDefaultGroupId()
+    {
+        $group = ClientGroupEntityRepository::findOneEntityByCriteria([
+            'default' => 1
+        ]);
 
-		// Required fields
-		if ($required_fields) {
+        if ($group) {
+            return $group->getId();
+        }
 
-			foreach ($post as $key => $field) {
-				if (in_array($key,$required_fields) && empty($field)) {
-					$errors[] = w('Need_to_fill_field') . ': '. $key;
-				}
-			}
-		}
+        return 0;
+    }
 
-		// Check e-mail address (required)
-		if (isset($post['email'])) {
-			if (empty($post['email']) || !filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
-				$errors[] = w('Email_field_error');
-			}
-			else {
-				// Check for existing user
-				$existing_client = ClientEntityRepository::findOneEntityByCriteria([
-						'email' => $post['email']
-				]);
+    /**
+     * This function is for example usage
+     * @param array $post
+     * @param bool $create_client
+     * @param array $required_fields
+     * @return array
+     */
+    private static function validateFields($post, $create_client = true, $required_fields = [])
+    {
 
-				if ($create_client) {
-					if ($existing_client) {
-						$errors[] = w('Client_with_this_email_already_exist');
-					}
-				}
-				else {
-					if ($existing_client && $existing_client->getId() != $post['id']) {
-						$errors[] = w('Client_with_this_email_already_exist');
-					}
-				}
-			}
-		}
+        $result = [];
+        $errors = [];
 
-		// Check password match (required)
-		if ($create_client) { // for registration
-			if (empty($post['password']) || $post['password'] != $post['repeat_password']) {
-				$errors[] = w('Password_field_error_or_passwords_does_not_match');
-			}
-			else {
-				$post['hash'] = self::generateHash($post['password']);
-			}
-		}
-		else { // for profile save
-			if (!empty($post['password'])) {
-				if ($post['password'] != $post['repeat_password']) {
-					$errors[] = w('Password_field_error_or_passwords_does_not_match');
-				}
-				else {
-					$post['hash'] = self::generateHash($post['password']);
-				}
-			}
-		}
+        // Required fields
+        if ($required_fields) {
 
-		unset($post['password']);
-		unset($post['repeat_password']);
+            foreach ($post as $key => $field) {
+                if (in_array($key, $required_fields) && empty($field)) {
+                    $errors[] = w('Need_to_fill_field') . ': ' . $key;
+                }
+            }
+        }
 
-		$result['errors'] = $errors;
-		$result['post'] = $post;
+        // Check e-mail address (required)
+        if (isset($post['email'])) {
+            if (empty($post['email']) || !filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
+                $errors[] = w('Email_field_error');
+            } else {
+                // Check for existing user
+                $existing_client = ClientEntityRepository::findOneEntityByCriteria([
+                    'email' => $post['email']
+                ]);
 
-		return $result;
-	}
+                if ($create_client) {
+                    if ($existing_client) {
+                        $errors[] = w('Client_with_this_email_already_exist');
+                    }
+                } else {
+                    if ($existing_client && $existing_client->getId() != $post['id']) {
+                        $errors[] = w('Client_with_this_email_already_exist');
+                    }
+                }
+            }
+        }
 
-	public static function register($post) {
+        // Check password match (required)
+        if ($create_client) { // for registration
+            if (empty($post['password']) || $post['password'] != $post['repeat_password']) {
+                $errors[] = w('Password_field_error_or_passwords_does_not_match');
+            } else {
+                $post['hash'] = self::generateHash($post['password']);
+            }
+        } else { // for profile save
+            if (!empty($post['password'])) {
+                if ($post['password'] != $post['repeat_password']) {
+                    $errors[] = w('Password_field_error_or_passwords_does_not_match');
+                } else {
+                    $post['hash'] = self::generateHash($post['password']);
+                }
+            }
+        }
 
-		// Validate profile fields
-		$validate = self::validateFields($post);
-		if (!empty($validate['errors'])) {
-			return ['errors' => $validate['errors']];
-		}
+        unset($post['password']);
+        unset($post['repeat_password']);
 
-		// Update variable after validations (needs for password hash)
-		$post = $validate['post'];
-		// Set client `active`
-		$post['active'] = 1;
+        $result['errors'] = $errors;
+        $result['post'] = $post;
 
-		// Create client
-		$new_client = new ClientEntity();
-		$new_client->loadDataFromArray($post);
-		$new_client->save();
+        return $result;
+    }
 
-		return ['result' => true];
+    /**
+     * This function is for example usage
+     * @param array $post
+     * @return array
+     */
+    public static function register($post)
+    {
 
-	}
+        // Validate profile fields
+        $validate = self::validateFields($post);
+        if (!empty($validate['errors'])) {
+            return ['errors' => $validate['errors']];
+        }
 
-	public static function saveProfile($post, $required = []) {
+        // Update variable after validations (needs for password hash)
+        $post = $validate['post'];
+        // Set client `active`
+        $post['active'] = 1;
 
-		// Check for client ID
-		$id = (!empty($post['id']) ? $post['id'] : 0);
-		$client = new ClientEntity($id);
+        // Create client
+        $new_client = new ClientEntity();
+        $new_client->loadDataFromArray($post);
+        $new_client->save();
 
-		// Stop session and go to login page
-		if (!$client) {
-			ModuleSessions::stop();
-			go(Structure::getPathByLabel('login'));
-		}
+        return ['result' => true];
 
-		// Validate profile fields
-		$validate = self::validateFields($post, false, $required);
-		if (!empty($validate['errors'])) {
-			return ['errors' => $validate['errors']];
-		}
+    }
 
-		// Update variable after validations (needs for password hash)
-		$post = $validate['post'];
-		unset($post['id']);
+    /**
+     * This function is for example usage
+     * @param array $post
+     * @param array $required
+     * @return array
+     */
+    public static function saveProfile($post, $required = [])
+    {
 
-		// Save
-		$client->loadDataFromArray($post);
-		$client->save();
+        // Check for client ID
+        $id = (!empty($post['id']) ? $post['id'] : 0);
+        $client = new ClientEntity($id);
 
-		return ['result' => true];
-	}
+        // Stop session and go to login page
+        if (!$client) {
+            ModuleSessions::stop();
+            go(Structure::getPathByLabel('login'));
+        }
 
+        // Validate profile fields
+        $validate = self::validateFields($post, false, $required);
+        if (!empty($validate['errors'])) {
+            return ['errors' => $validate['errors']];
+        }
+
+        // Update variable after validations (needs for password hash)
+        $post = $validate['post'];
+        unset($post['id']);
+
+        // Save
+        $client->loadDataFromArray($post);
+        $client->save();
+
+        return ['result' => true];
+    }
 }
