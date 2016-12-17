@@ -29,22 +29,16 @@ use TMCms\Modules\Sessions\ModuleSessions;
 
 defined('INC') or exit;
 
-Menu::getInstance()
-    ->addSubMenuItem('groups')
-    ->addSubMenuItem('sessions')
-;
-
 class CmsClients
 {
     /** Clients */
 
     public static function _default()
     {
-        echo Columns::getInstance()
-            ->add('<a class="btn btn-success" href="?p=' . P . '&do=add">Add Client</a>', ['align' => 'right'])
+        BreadCrumbs::getInstance()
+            ->addCrumb(P)
+            ->addAction('Add Client', '?p=' . P . '&do=add')
         ;
-
-        echo '<br>';
 
         $clients = new ClientEntityRepository();
         $clients->addOrderByField('id');
@@ -52,6 +46,7 @@ class CmsClients
         $groups = new ClientGroupEntityRepository();
 
         echo CmsTable::getInstance()
+            ->setHeadingTitle('Clients')
             ->addData($clients)
             ->addColumn(ColumnData::getInstance('login')
                 ->enableOrderableColumn()
@@ -105,6 +100,7 @@ class CmsClients
         $client_groups = new ClientGroupEntityRepository();
 
         return CmsForm::getInstance()
+            ->setFormTitle('Add client')
             ->addField('Group', CmsSelect::getInstance('group_id')
                 ->setOptions($client_groups->getPairs('title'))
             )
@@ -133,6 +129,7 @@ class CmsClients
         $client = new ClientEntity($id);
 
         echo self::__clients_add_edit_form()
+            ->setFormTitle('Edit client')
             ->addData($client->getAsArray())
             ->setAction('?p=' . P . '&do=_edit&id=' . $id)
             ->setSubmitButton(new CmsButton('Update'));
@@ -204,13 +201,13 @@ class CmsClients
         $groups = new ClientGroupEntityRepository();
         $groups->addOrderByField('id');
 
-        echo Columns::getInstance()
-            ->add('<a class="btn btn-success" href="?p=' . P . '&do=groups_add">Add Group</a>', ['align' => 'right'])
+        BreadCrumbs::getInstance()
+            ->addCrumb(P)
+            ->addAction('Add Group', '?p=' . P . '&do=groups_add')
         ;
 
-        echo '<br>';
-
         echo CmsTable::getInstance()
+            ->setHeadingTitle('Groups')
             ->addData($groups)
             ->addColumn(ColumnData::getInstance('title')
                 ->enableOrderableColumn()
@@ -245,6 +242,7 @@ class CmsClients
     public static function groups_add()
     {
         echo self::__groups_add_edit_form()
+            ->setFormTitle('Add group')
             ->setAction('?p=' . P . '&do=_groups_add')
             ->setSubmitButton(new CmsButton('Add'));
     }
@@ -256,6 +254,7 @@ class CmsClients
         $group = new ClientGroupEntity($id);
 
         echo self::__groups_add_edit_form()
+            ->setFormTitle('Edit group')
             ->addData($group->getAsArray())
             ->setAction('?p=' . P . '&do=_groups_edit&id=' . $id)
             ->setSubmitButton(new CmsButton('Update'));
@@ -341,7 +340,7 @@ class CmsClients
             error('No Module Sessions installed');
         }
 
-        echo BreadCrumbs::getInstance()
+        BreadCrumbs::getInstance()
             ->addCrumb(ucfirst(P))
             ->addCrumb('Client sessions')
         ;
@@ -360,6 +359,7 @@ class CmsClients
         $clients->mergeWithCollection($sessions, 'id', 'user_id');
 
         echo CmsTable::getInstance()
+            ->setHeadingTitle('Client sessions')
             ->addData($clients)
             ->setCallbackFunction(function ($data)
             {

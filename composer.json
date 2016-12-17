@@ -19,9 +19,7 @@
   ],
   "require": {
     "devp-eu/tmcms-core": "dev-master",
-    "devp-eu/tmcms-panel": "dev-master"
-  },
-  "suggest": {
+    "devp-eu/tmcms-panel": "dev-master",
     "devp-eu/tmcms-module-sessions": "dev-master"
   },
   "autoload": {
