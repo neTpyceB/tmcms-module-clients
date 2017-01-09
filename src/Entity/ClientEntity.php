@@ -18,6 +18,7 @@ use TMCms\Orm\Entity;
  *
  * @method setActive(bool $flag)
  * @method setGroupId(int $group_id)
+ * @method setName(int $group_id)
  * @method setPassword(string $password)
  */
 class ClientEntity extends Entity {
