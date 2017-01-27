@@ -80,7 +80,7 @@ class CmsClients
 
     public function _auth()
     {
-        if (ModuleManager::moduleExists('sessions')) {
+        if (!ModuleManager::moduleExists('sessions')) {
             error('Module Sessions required');
         }
 
