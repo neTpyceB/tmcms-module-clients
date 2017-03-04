@@ -9,6 +9,7 @@ use TMCms\Orm\Entity;
  * Class Client
  * @package TMCms\Modules\Clients\Object
  *
+ * @method int getActive()
  * @method string getCompany()
  * @method string getEmail()
  * @method int getGroupId()
