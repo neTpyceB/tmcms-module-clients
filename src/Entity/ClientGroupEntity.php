@@ -8,6 +8,8 @@ use TMCms\Orm\Entity;
  * Class ClientGroup
  * @package TMCms\Modules\Clients\Entity
  *
+ * @method string getTitle()
+ *
  * @method bool getDefault()
  * @method setDefault(bool $flag)
  */

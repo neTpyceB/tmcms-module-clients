@@ -2,7 +2,6 @@
 
 namespace TMCms\Modules\Clients;
 
-use TMCms\Admin\Menu;
 use TMCms\Admin\Messages;
 use TMCms\HTML\BreadCrumbs;
 use TMCms\HTML\Cms\CmsForm;
@@ -11,7 +10,6 @@ use TMCms\HTML\Cms\Column\ColumnActive;
 use TMCms\HTML\Cms\Column\ColumnData;
 use TMCms\HTML\Cms\Column\ColumnDelete;
 use TMCms\HTML\Cms\Column\ColumnEdit;
-use TMCms\HTML\Cms\Columns;
 use TMCms\HTML\Cms\Element\CmsButton;
 use TMCms\HTML\Cms\Element\CmsInputEmail;
 use TMCms\HTML\Cms\Element\CmsInputPassword;
@@ -68,7 +66,7 @@ class CmsClients
                 ->setPairedDataOptionsForKeys($groups->getPairs('title'))
             )
             ->addColumn(ColumnData::getInstance('auth')
-                ->value('auth...')
+                ->setValue('auth...')
                 ->setHref('?p='. P .'&do=_auth&id={%id%}')
                 ->enableNarrowWidth()
             )
@@ -78,21 +76,11 @@ class CmsClients
         ;
     }
 
-    public function _auth()
+    public static function add()
     {
-        if (!ModuleManager::moduleExists('sessions')) {
-            error('Module Sessions required');
-        }
-
-        // Stop existing session
-        ModuleSessions::stop();
-
-        // Start session
-        $client = new ClientEntity($_GET['id']);
-        ModuleSessions::start($client->getId());
-
-        // Redirect to main page
-        go('/');
+        echo self::__clients_add_edit_form()
+            ->setAction('?p=' . P . '&do=_add')
+            ->setSubmitButton(new CmsButton('Add'));
     }
 
     private static function __clients_add_edit_form()
@@ -111,15 +99,8 @@ class CmsClients
             ->addField('Phone', CmsInputText::getInstance('phone'))
             ->addField('Password', CmsInputPassword::getInstance('password')
                 ->reveal(true)
-                ->help('Leave empty to keep current')
+                ->setHintText('Leave empty to keep current')
             );
-    }
-
-    public static function add()
-    {
-        echo self::__clients_add_edit_form()
-            ->setAction('?p=' . P . '&do=_add')
-            ->setSubmitButton(new CmsButton('Add'));
     }
 
     public static function edit()
@@ -192,8 +173,6 @@ class CmsClients
         back();
     }
 
-
-
     /** Groups */
 
     public static function groups()
@@ -231,20 +210,20 @@ class CmsClients
         ;
     }
 
-    private static function __groups_add_edit_form()
-    {
-        return CmsForm::getInstance()
-            ->addField('Title', CmsInputText::getInstance('title')
-                ->enableTranslationField()
-            );
-    }
-
     public static function groups_add()
     {
         echo self::__groups_add_edit_form()
             ->setFormTitle('Add group')
             ->setAction('?p=' . P . '&do=_groups_add')
             ->setSubmitButton(new CmsButton('Add'));
+    }
+
+    private static function __groups_add_edit_form()
+    {
+        return CmsForm::getInstance()
+            ->addField('Title', CmsInputText::getInstance('title')
+                ->enableTranslation()
+            );
     }
 
     public static function groups_edit()
@@ -326,6 +305,23 @@ class CmsClients
         Messages::sendGreenAlert('Group updated');
 
         back();
+    }
+
+    public function _auth()
+    {
+        if (!ModuleManager::moduleExists('sessions')) {
+            error('Module Sessions required');
+        }
+
+        // Stop existing session
+        ModuleSessions::stop();
+
+        // Start session
+        $client = new ClientEntity($_GET['id']);
+        ModuleSessions::start($client->getId());
+
+        // Redirect to main page
+        go('/');
     }
 
 
