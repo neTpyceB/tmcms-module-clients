@@ -37,8 +37,8 @@ class ClientEntityRepository extends EntityRepository {
                 'type' => 'varchar',
             ],
             'hash' => [
-                'type' => 'char',
-                'length' => 128,
+                'type'   => 'char',
+                'length' => 60,
             ],
         ],
     ];

@@ -19,8 +19,9 @@ use TMCms\Orm\Entity;
  *
  * @method setActive(bool $flag)
  * @method setGroupId(int $group_id)
- * @method setName(int $group_id)
- * @method setPassword(string $password)
+ * @method setLogin(string $login)
+ * @method setName(string $group_id)
+ * @method setHash(string $password)
  */
 class ClientEntity extends Entity {
     protected $db_table = 'm_clients';
