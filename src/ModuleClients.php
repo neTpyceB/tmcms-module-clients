@@ -22,7 +22,6 @@ class ModuleClients implements IModule
 
     public static function authorize($login, $password)
     {
-        dump(self::generateHash($password));
         return ClientEntityRepository::findOneEntityByCriteria([
             'login' => $login,
             'hash' => self::generateHash($password),
