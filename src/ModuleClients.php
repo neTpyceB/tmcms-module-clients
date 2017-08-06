@@ -43,9 +43,7 @@ class ModuleClients implements IModule
      */
     public static function generateHash($password)
     {
-        return Users::getInstance()->generatePasswordHash($password, self::$_password_salt . Configuration::getInstance()->get('cms')['unique_key']);
-        // Deprecated since 2017.08.06
-//        return Users::getInstance()->generateHash($password, self::$_password_salt . Configuration::getInstance()->get('cms')['unique_key']);
+        return Users::getInstance()->generateHash($password, self::$_password_salt . Configuration::getInstance()->get('cms')['unique_key']);
     }
 
     /**

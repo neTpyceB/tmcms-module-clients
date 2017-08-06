@@ -17,7 +17,7 @@ use TMCms\Orm\Entity;
  * @method string getName()
  * @method string getPhone()
  *
- * @method setActive(bool $flag)
+ * @method setActive(int $flag)
  * @method setGroupId(int $group_id)
  * @method setLogin(string $login)
  * @method setName(string $group_id)
