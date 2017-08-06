@@ -15,28 +15,31 @@ use TMCms\Orm\EntityRepository;
 class ClientEntityRepository extends EntityRepository {
     protected $table_structure = [
         'fields' => [
-            'group_id' => [
+            'group_id'   => [
                 'type' => 'index',
             ],
-            'active' => [
+            'active'     => [
                 'type' => 'bool',
             ],
-            'login' => [
+            'ts_created' => [
+                'type' => 'ts',
+            ],
+            'login'      => [
                 'type' => 'varchar',
             ],
-            'email' => [
+            'email'      => [
                 'type' => 'varchar',
             ],
-            'name' => [
+            'name'       => [
                 'type' => 'varchar',
             ],
-            'company' => [
+            'company'    => [
                 'type' => 'varchar',
             ],
-            'phone' => [
+            'phone'      => [
                 'type' => 'varchar',
             ],
-            'hash' => [
+            'hash'       => [
                 'type'   => 'varchar',
                 'length' => 255,
             ],

@@ -22,6 +22,7 @@ use TMCms\Orm\Entity;
  * @method setLogin(string $login)
  * @method setName(string $group_id)
  * @method setHash(string $password)
+ * @method setTsCreated(int $ts)
  */
 class ClientEntity extends Entity {
     protected $db_table = 'm_clients';
@@ -31,6 +32,8 @@ class ClientEntity extends Entity {
         if (!$this->getGroupId()) {
             $this->setGroupId(ModuleClients::getDefaultGroupId());
         }
+
+        $this->setTsCreated(NOW);
 
         return $this;
     }
