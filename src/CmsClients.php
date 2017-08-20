@@ -80,7 +80,7 @@ class CmsClients
     {
         echo self::__clients_add_edit_form()
             ->setAction('?p=' . P . '&do=_add')
-            ->setSubmitButton(new CmsButton('Add'));
+            ->setButtonSubmit(new CmsButton('Add'));
     }
 
     private static function __clients_add_edit_form()
@@ -113,7 +113,7 @@ class CmsClients
             ->setFormTitle('Edit client')
             ->addData($client->getAsArray())
             ->setAction('?p=' . P . '&do=_edit&id=' . $id)
-            ->setSubmitButton(new CmsButton('Update'));
+            ->setButtonSubmit(new CmsButton('Update'));
     }
 
     public static function _add()
@@ -215,7 +215,7 @@ class CmsClients
         echo self::__groups_add_edit_form()
             ->setFormTitle('Add group')
             ->setAction('?p=' . P . '&do=_groups_add')
-            ->setSubmitButton(new CmsButton('Add'));
+            ->setButtonSubmit(new CmsButton('Add'));
     }
 
     private static function __groups_add_edit_form()
@@ -236,7 +236,7 @@ class CmsClients
             ->setFormTitle('Edit group')
             ->addData($group->getAsArray())
             ->setAction('?p=' . P . '&do=_groups_edit&id=' . $id)
-            ->setSubmitButton(new CmsButton('Update'));
+            ->setButtonSubmit(new CmsButton('Update'));
     }
 
     public static function _groups_add()
