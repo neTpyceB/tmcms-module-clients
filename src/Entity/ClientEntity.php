@@ -13,6 +13,7 @@ use TMCms\Orm\Entity;
  * @method string getCompany()
  * @method string getEmail()
  * @method int getGroupId()
+ * @method string getHash()
  * @method string getLogin()
  * @method string getName()
  * @method string getPhone()

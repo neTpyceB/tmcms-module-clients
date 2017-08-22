@@ -351,8 +351,8 @@ class CmsClients
         $sessions->addSimpleSelectFields(['id', 'sid', 'ip', 'ts']);
         $sessions->addOrderByField('ts', true);
 
-        $clients->mergeWithCollection($groups, 'group_id');
-        $clients->mergeWithCollection($sessions, 'id', 'user_id');
+        $clients->mergeWithCollection($groups, 'group_id', 'id', 'LEFT');
+        $clients->mergeWithCollection($sessions, 'id', 'user_id', 'LEFT');
 
         echo CmsTable::getInstance()
             ->setHeadingTitle('Client sessions')
