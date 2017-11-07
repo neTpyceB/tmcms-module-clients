@@ -3,6 +3,7 @@
 namespace TMCms\Modules\Clients\Entity;
 
 use TMCms\Orm\EntityRepository;
+use TMCms\Orm\TableStructure;
 
 /**
  * Class ClientRepository
@@ -22,7 +23,7 @@ class ClientEntityRepository extends EntityRepository {
                 'type' => 'bool',
             ],
             'ts_created' => [
-                'type' => 'ts',
+                'type' => TableStructure::FIELD_TYPE_UNSIGNED_INTEGER,
             ],
             'login'      => [
                 'type' => 'varchar',

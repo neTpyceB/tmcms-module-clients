@@ -3,6 +3,7 @@
 namespace TMCms\Modules\Clients\Entity;
 
 use TMCms\Orm\EntityRepository;
+use TMCms\Orm\TableStructure;
 
 /**
  * Class ClientGroupRepository
@@ -16,7 +17,7 @@ class ClientGroupEntityRepository extends EntityRepository {
     protected $table_structure = [
         'fields' => [
             'title' => [
-                'type' => 'translation',
+                'type' => TableStructure::FIELD_TYPE_TRANSLATION,
             ],
             'active' => [
                 'type' => 'bool',
