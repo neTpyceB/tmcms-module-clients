@@ -157,7 +157,7 @@ class ModuleClients implements IModule
         $new_client->loadDataFromArray($post);
         $new_client->save();
 
-        return ['result' => true];
+        return ['result' => true, 'client' => $new_client];
 
     }
 
