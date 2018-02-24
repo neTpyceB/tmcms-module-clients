@@ -98,7 +98,7 @@ class CmsClients
             ->addField('Company', CmsInputText::getInstance('company'))
             ->addField('Phone', CmsInputText::getInstance('phone'))
             ->addField('Password', CmsInputPassword::getInstance('password')
-                ->reveal(true)
+                ->setReveal(true)
                 ->setHintText('Leave empty to keep current')
             );
     }
@@ -329,6 +329,7 @@ class CmsClients
 
     /**
      * AdminUser's Sessions
+     * @throws \InvalidArgumentException
      */
     public function sessions()
     {
@@ -379,7 +380,7 @@ class CmsClients
             )
             ->addColumn(ColumnData::getInstance('ip'))
             ->addColumn(ColumnData::getInstance('ts')
-                ->orderBy('`ts`')
+                ->setOrderBy('`ts`')
                 ->dataType('ts2datetime')
                 ->setTitle('Date')
             )
