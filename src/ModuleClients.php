@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TMCms\Modules\Clients;
 
@@ -12,14 +13,23 @@ use TMCms\Modules\Sessions\ModuleSessions;
 use TMCms\Routing\Structure;
 use TMCms\Traits\singletonInstanceTrait;
 
-defined('INC') or exit;
+\defined('INC') or exit;
 
+/**
+ * Class ModuleClients
+ * @package TMCms\Modules\Clients
+ */
 class ModuleClients implements IModule
 {
     use singletonInstanceTrait;
 
     private static $_password_salt = 'fgfdg#EGTU$%!)<vdg';
 
+    /**
+     * @param $login
+     * @param $password
+     * @return NULL|\TMCms\Orm\Entity
+     */
     public static function authorize($login, $password)
     {
         return ClientEntityRepository::findOneEntityByCriteria([
