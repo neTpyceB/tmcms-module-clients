@@ -23,6 +23,7 @@ class ModuleClients implements IModule
 {
     use singletonInstanceTrait;
 
+    private static $_client_data_cache = [];
     private static $_password_salt = 'fgfdg#EGTU$%!)<vdg';
 
     /**
@@ -205,5 +206,25 @@ class ModuleClients implements IModule
         $client->save();
 
         return ['result' => true];
+    }
+
+    /**
+     * @param int $client_id
+     *
+     * @return array
+     */
+    public static function getClientData(int $client_id): array
+    {
+        if (!empty(self::$_client_data_cache[$client_id])) {
+            return self::$_client_data_cache[$client_id];
+        }
+
+        $client = new ClientEntity($client_id);
+        $client_data = $client->getAsArray();
+
+        // Unset sensitive fields like password
+        unset($client_data['hash']);
+
+        return self::$_client_data_cache[$client_id] = $client_data;
     }
 }
